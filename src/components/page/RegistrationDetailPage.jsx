@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { registrationAPI } from '../../service/api';
 import { Layout } from '../layout/Layout.jsx';
 import { useAuth } from '../../context/AuthContext';
+import Button from "daisyui/components/button/index.js";
 
 export const RegistrationDetailPage = () => {
     const { id } = useParams();
@@ -15,10 +16,37 @@ export const RegistrationDetailPage = () => {
     const [newStatus, setNewStatus] = useState('');
     const [notes, setNotes] = useState('');
     const [customMessage, setCustomMessage] = useState('');
+    const [studentInfo, setStudentInfo] = useState({
+        firstName: '',
+        lastName: '',
+        email:  '',
+        mobilePhone: '',
+        homePhone: '',
+        currentSchool: '',
+        grade: '',
+        examSection: ''
+    });
+    const [isChanged, setIsChanged] = useState(false);
 
     useEffect(() => {
         fetchRegistration();
     }, [id]);
+
+    useEffect(() => {
+        if (registration) {
+            setStudentInfo({
+                firstName: registration.firstName || '',
+                lastName: registration.lastName || '',
+                email: registration.email || '',
+                mobilePhone: registration.mobilePhone || '',
+                homePhone: registration.homePhone || '',
+                currentSchool: registration.currentSchool || '',
+                grade: registration.grade || '',
+                examSection: registration.examSection || ''
+            });
+            setIsChanged(false); // reset dirty flag after hydration
+        }
+    }, [registration]);
 
     const fetchRegistration = async () => {
         try {
@@ -33,6 +61,27 @@ export const RegistrationDetailPage = () => {
             setLoading(false);
         }
     };
+    const handleSaveChanges = async () => {
+        try{
+            const response = await registrationAPI.updateInfo(id, studentInfo);
+            alert('Registration updated successfully!');
+            setStudentInfo(response.data);
+            await fetchRegistration();
+        } catch (error) {
+            console.error('Error updating registration:', error);
+            alert('Error updating registration');
+        } finally {
+            setUpdating(false);
+        }
+
+    }
+
+    const handleInfoChange = (e) => {
+        setIsChanged(true);
+        const { name, value } = e.target;
+        setStudentInfo({ ...studentInfo, [name]: value });
+    }
+
 
     const handleUpdateStatus = async () => {
         if (newStatus === registration.paymentStatus) {
@@ -137,7 +186,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">First Name</span>
                                         </label>
                                         <div>
-                                            <input type="text" value={registration.firstName} className="input"/>
+                                            <input type="text" name="firstName" value={studentInfo.firstName} className="input" onChange={handleInfoChange}/>
                                         </div>
 
                                     </div>
@@ -146,7 +195,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">Last Name</span>
                                         </label>
                                         <div>
-                                            <input type="text" value={registration.lastName} className="input"/>
+                                            <input type="text" name="lastName" value={studentInfo.lastName} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     <div>
@@ -154,7 +203,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">Email</span>
                                         </label>
                                         <div>
-                                            <input type="text" value={registration.email} className="input"/>
+                                            <input type="text" name="email" value={studentInfo.email} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     <div>
@@ -162,7 +211,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">Mobile Phone</span>
                                         </label>
                                         <div>
-                                            <input type="text" value={registration.mobilePhone} className="input"/>
+                                            <input type="text" name={"mobilePhone"} value={studentInfo.mobilePhone} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     {registration.homePhone && (
@@ -171,7 +220,7 @@ export const RegistrationDetailPage = () => {
                                                 <span className="label-text font-semibold">Home Phone</span>
                                             </label>
                                             <div>
-                                                <input type="text" value={registration.homePhone} className="input"/>
+                                                <input type="text" name={"homePhone"} value={studentInfo.homePhone} className="input" onChange={handleInfoChange}/>
                                             </div>
                                         </div>
                                     )}
@@ -180,7 +229,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">School</span>
                                         </label>
                                         <div>
-                                            <input type="text" value={registration.currentSchool} className="input"/>
+                                            <input type="text" name={"currentSchool"} value={studentInfo.currentSchool} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     <div>
@@ -188,7 +237,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">Grade</span>
                                         </label>
                                         <div>
-                                            <input type="text" value={registration.grade} className="input"/>
+                                            <input type="text" name={"grade"} value={studentInfo.grade} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     <div>
@@ -196,7 +245,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">Exam Section</span>
                                         </label>
                                         <div>
-                                            <input type="text" value={registration.examSection} className="input"/>
+                                            <input type="text" name={"examSection"} value={studentInfo.examSection} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     <div>
@@ -205,6 +254,7 @@ export const RegistrationDetailPage = () => {
                                         </label>
                                         <p>{formatDate(registration.createdAt)}</p>
                                     </div>
+
                                     {registration.updatedAt && (
                                         <div>
                                             <label className="label">
@@ -216,6 +266,13 @@ export const RegistrationDetailPage = () => {
                                             )}
                                         </div>
                                     )}
+                                </div>
+                                <div>
+                                    <button
+                                        className="btn btn-primary"
+                                        onClick={handleSaveChanges}
+                                        disabled={!isChanged}
+                                    > Save Changes </button>
                                 </div>
                             </div>
                         </div>
