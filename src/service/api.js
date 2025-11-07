@@ -1,0 +1,184 @@
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5051/api';
+
+// Get token from localStorage
+const getAuthToken = () => {
+    return localStorage.getItem('adminToken');
+};
+
+// Generic API request with authentication (add token to headers)
+const apiRequest = async (url, options = {}) => {
+    const token = getAuthToken();
+
+    const defaultOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+            ...(token && { 'Authorization': `Bearer ${token}` }),
+            ...options.headers,
+        },
+    };
+
+    const config = { ...defaultOptions, ...options };
+
+    try {
+        const response = await fetch(`${API_BASE_URL}${url}`, config);
+
+        // Handle 401 Unauthorized
+        if (response.status === 401) {
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = '/login';
+            throw new Error('Unauthorized');
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw {
+                status: response.status,
+                message: data.message || 'An error occurred',
+                errors: data.errors || [],
+            };
+        }
+
+        return data;
+    } catch (error) {
+        if (error.status) {
+            throw error;
+        }
+        throw {
+            status: 0,
+            message: 'Network error. Please check your connection.',
+            errors: [error.message],
+        };
+    }
+};
+
+// Authentication API
+export const authAPI = {
+    login: async (username, password) => {
+        const response = await apiRequest('/admin/login', {
+            method: 'POST',
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (response.token) {
+            localStorage.setItem('adminToken', response.token);
+            localStorage.setItem('adminUser', JSON.stringify({
+                username: response.username,
+                email: response.email,
+                role: response.role,
+            }));
+        }
+
+        return response;
+    },
+
+    logout: () => {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('adminUser');
+    },
+
+    getCurrentUser: async () => {
+        return await apiRequest('/admin/me');
+    },
+};
+
+// Registration API
+export const registrationAPI = {
+    getAll: async () => {
+        return await apiRequest('/registrations');
+    },
+
+    getById: async (id) => {
+        return await apiRequest(`/registrations/${id}`);
+    },
+
+    updateInfo: async (id, userData) => {
+        return await apiRequest(`/registrations/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(userData),
+        });
+    },
+
+    updateStatus: async (id, statusData) => {
+        return await apiRequest(`/registrations/${id}/status`, {
+            method: 'PUT',
+            body: JSON.stringify(statusData),
+        });
+    },
+
+    bulkUpdateStatus: async (bulkData) => {
+        return await apiRequest('/registrations/bulk-status', {
+            method: 'PUT',
+            body: JSON.stringify(bulkData),
+        });
+    },
+
+    sendNotification: async (id, customMessage = null) => {
+        return await apiRequest(`/registrations/${id}/notify`, {
+            method: 'POST',
+            body: JSON.stringify({ registrationId: id, customMessage }),
+        });
+    },
+
+    exportCSV: async () => {
+        const token = getAuthToken();
+        const response = await fetch(`${API_BASE_URL}/registrations/export`, {
+            headers: {
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to export CSV');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `registrations_${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+    },
+};
+
+// Admin User API
+export const adminUserAPI = {
+    getAll: async () => {
+        return await apiRequest('/Admin/getAllusers');
+    },
+
+    getById: async (id) => {
+        return await apiRequest(`/admin/users/${id}`);
+    },
+
+    create: async (userData) => {
+        return await apiRequest('/admin/users', {
+            method: 'POST',
+            body: JSON.stringify(userData),
+        });
+    },
+
+    update: async (id, userData) => {
+        return await apiRequest(`/admin/users/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(userData),
+        });
+    },
+
+    updatePassword: async (id, newPassword) => {
+        return await apiRequest(`/admin/users/${id}/password`, {
+            method: 'PUT',
+            body: JSON.stringify({ userId: id, newPassword }),
+        });
+    },
+
+    delete: async (id) => {
+        return await apiRequest(`/admin/users/${id}`, {
+            method: 'DELETE',
+        });
+    },
+};
