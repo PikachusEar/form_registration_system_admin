@@ -101,7 +101,7 @@ export const registrationAPI = {
     },
 
     updateStatus: async (id, statusData) => {
-        return await apiRequest(`/registrations/${id}/status`, {
+        return await apiRequest(`/registrations/${id}/payment-status`, {
             method: 'PUT',
             body: JSON.stringify(statusData),
         });
@@ -115,15 +115,15 @@ export const registrationAPI = {
     },
 
     sendNotification: async (id, customMessage = null) => {
-        return await apiRequest(`/registrations/${id}/notify`, {
+        return await apiRequest(`/registrations/${id}/send-notification`, {
             method: 'POST',
-            body: JSON.stringify({ registrationId: id, customMessage }),
+            body: JSON.stringify({ registrationId: id, Message: customMessage }),
         });
     },
 
     exportCSV: async () => {
         const token = getAuthToken();
-        const response = await fetch(`${API_BASE_URL}/registrations/export`, {
+        const response = await fetch(`${API_BASE_URL}/registrations/export-csv`, {
             headers: {
                 ...(token && { 'Authorization': `Bearer ${token}` }),
             },

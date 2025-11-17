@@ -16,6 +16,7 @@ export const RegistrationDetailPage = () => {
     const [newStatus, setNewStatus] = useState('');
     const [notes, setNotes] = useState('');
     const [customMessage, setCustomMessage] = useState('');
+    const [sendNotification, setSendNotification] = useState(false);
     const [studentInfo, setStudentInfo] = useState({
         firstName: '',
         lastName: '',
@@ -97,6 +98,7 @@ export const RegistrationDetailPage = () => {
             await registrationAPI.updateStatus(id, {
                 paymentStatus: newStatus,
                 notes: notes || `Status changed to ${newStatus}`,
+                SendNotificationEmail: sendNotification,
                 updatedBy: currentUser?.username || 'Admin',
             });
 
@@ -333,16 +335,27 @@ export const RegistrationDetailPage = () => {
                                     </div>
                                     <div className="form-control">
                                         <label className="label">
+                                            <span className="label-text">Send Notification</span>
+                                            <input
+                                                type="checkbox"
+                                                className="toggle toggle-primary ml-2"
+                                                onChange={(e) => setSendNotification(e.target.checked)}
+                                            />
+                                        </label>
+                                    </div>
+
+                                    <div className="form-control">
+                                        <label className="label">
                                             <span className="label-text">Notes (optional)</span>
                                         </label>
-                                        <textarea
-                                            className="textarea textarea-bordered"
-                                            placeholder="Add notes about this status change..."
+                                        <div><textarea
+                                            className="textarea textarea-bordered w-full"
+                                            placeholder="Add notes about this change (Student will see this note)"
                                             value={notes}
                                             onChange={(e) => setNotes(e.target.value)}
                                             disabled={updating}
                                             rows="2"
-                                        />
+                                        /></div>
                                     </div>
                                     <button
                                         onClick={handleUpdateStatus}
@@ -365,16 +378,16 @@ export const RegistrationDetailPage = () => {
                                     </p>
                                     <div className="form-control">
                                         <label className="label">
-                                            <span className="label-text">Custom Message (optional)</span>
+                                            <span className="label-text">Custom Message (required)</span>
                                         </label>
-                                        <textarea
-                                            className="textarea textarea-bordered"
+                                        <div><textarea
+                                            className="textarea textarea-bordered w-full"
                                             placeholder="Add a custom message to include in the email..."
                                             value={customMessage}
                                             onChange={(e) => setCustomMessage(e.target.value)}
                                             disabled={sending}
                                             rows="3"
-                                        />
+                                        /></div>
                                     </div>
                                     <button
                                         onClick={handleSendNotification}
