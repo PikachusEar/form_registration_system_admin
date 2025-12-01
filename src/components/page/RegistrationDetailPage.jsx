@@ -4,6 +4,7 @@ import { registrationAPI } from '../../service/api';
 import { Layout } from '../layout/Layout.jsx';
 import { useAuth } from '../../context/AuthContext';
 import Button from "daisyui/components/button/index.js";
+import ExamSections from "../common/ExamSections.jsx";
 
 export const RegistrationDetailPage = () => {
     const { id } = useParams();
@@ -25,7 +26,6 @@ export const RegistrationDetailPage = () => {
         homePhone: '',
         currentSchool: '',
         grade: '',
-        examSection: ''
     });
     const [isChanged, setIsChanged] = useState(false);
 
@@ -43,7 +43,6 @@ export const RegistrationDetailPage = () => {
                 homePhone: registration.homePhone || '',
                 currentSchool: registration.currentSchool || '',
                 grade: registration.grade || '',
-                examSection: registration.examSection || ''
             });
             setIsChanged(false); // reset dirty flag after hydration
         }
@@ -244,14 +243,6 @@ export const RegistrationDetailPage = () => {
                                     </div>
                                     <div>
                                         <label className="label">
-                                            <span className="label-text font-semibold">Exam Section</span>
-                                        </label>
-                                        <div>
-                                            <input type="text" name={"examSection"} value={studentInfo.examSection} className="input" onChange={handleInfoChange}/>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label className="label">
                                             <span className="label-text font-semibold">Created At</span>
                                         </label>
                                         <p>{formatDate(registration.createdAt)}</p>
@@ -278,6 +269,14 @@ export const RegistrationDetailPage = () => {
                                 </div>
                             </div>
                         </div>
+                        <div className="card bg-base-100 shadow-xl">
+                            <div className="card-body">
+                                <h2 className="card-title">Exam Selections</h2>
+                                <ExamSections sections={registration.examSections}/>
+                            </div>
+                        </div>
+
+
 
                         {/* Audit History */}
                         <div className="card bg-base-100 shadow-xl">
