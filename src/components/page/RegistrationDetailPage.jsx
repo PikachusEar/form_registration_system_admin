@@ -48,9 +48,9 @@ export const RegistrationDetailPage = () => {
                 homePhone: registration.homePhone || '',
                 currentSchool: registration.currentSchool || '',
                 grade: registration.grade || '',
-                address: 'test',
-                gender: 'test',
-                examSections: [{id: '30654970-c2f3-452e-9f3b-91e0a852a3fb', sectionName: "Week 1: Monday, European History"}, {id: "3bd62a1f-fdcb-43a8-8d40-bfbb5989c3f7", sectionName: "Week 1: Monday, European History"}]
+                address: registration.address || '',
+                gender: registration.gender || '',
+                examSections: registration.examSections || []
             });
             setIsChanged(false); // reset dirty flag after hydration
         }
@@ -301,7 +301,7 @@ export const RegistrationDetailPage = () => {
                         <div className="card bg-base-100 shadow-xl">
                             <div className="card-body">
                                 <h2 className="card-title">Exam Selections</h2>
-                                <ExamSections sections={registration.examSections}/>
+                                <ExamSections sections={studentInfo.examSections} onChange={handleInfoChange}/>
                             </div>
                         </div>
 
