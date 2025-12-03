@@ -1,7 +1,6 @@
 // ExamSections.jsx
-import { useState } from 'react';
 
-export const ExamSections = ({ sections = [], onSectionsChange, disabled = false }) => {
+export const ExamSections = ({ sections = [], onChange}) => {
     if (!sections || sections.length === 0) {
         return (
             <div>
@@ -20,13 +19,19 @@ export const ExamSections = ({ sections = [], onSectionsChange, disabled = false
         <div>
             <div className="space-y-2">
                 {sortedSections.map((section, index) => (
-                    <div
-                        key={section.id}
-                        className="p-3 bg-base-200 rounded-lg flex items-start gap-3"
-                    >
-                        <span className="badge badge-sm mt-1">{index + 1}</span>
-                        <p className="flex-1">{section.sectionName}</p>
+                    <div className="grid grid-cols-2 gap-4 bg-base-200">
+                        <div
+                            key={section.id}
+                            className="p-3 rounded-lg flex items-start gap-3"
+                        >
+                            <span className="badge badge-sm mt-1">{index + 1}</span>
+                            <p className="flex-1">{section.sectionName}</p>
+                        </div>
+                        <div className="p-3 rounded-lg flex items-center gap-3">
+                            <input type="text" placeholder="Join Code" value={section.joinCode} className="input" onChange={onChange} />
+                        </div>
                     </div>
+
                 ))}
             </div>
         </div>

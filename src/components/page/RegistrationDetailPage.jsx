@@ -18,6 +18,7 @@ export const RegistrationDetailPage = () => {
     const [notes, setNotes] = useState('');
     const [customMessage, setCustomMessage] = useState('');
     const [sendNotification, setSendNotification] = useState(false);
+    const [sendJoinCode, setSendJoinCode] = useState(false);
     const [studentInfo, setStudentInfo] = useState({
         firstName: '',
         lastName: '',
@@ -26,7 +27,11 @@ export const RegistrationDetailPage = () => {
         homePhone: '',
         currentSchool: '',
         grade: '',
+        address: 'test',
+        gender: 'test',
+        examSections: [{id: '30654970-c2f3-452e-9f3b-91e0a852a3fb', sectionName: "Week 1: Monday, European History"}, {id: "3bd62a1f-fdcb-43a8-8d40-bfbb5989c3f7", sectionName: "Week 1: Monday, European History"}]
     });
+
     const [isChanged, setIsChanged] = useState(false);
 
     useEffect(() => {
@@ -43,6 +48,9 @@ export const RegistrationDetailPage = () => {
                 homePhone: registration.homePhone || '',
                 currentSchool: registration.currentSchool || '',
                 grade: registration.grade || '',
+                address: 'test',
+                gender: 'test',
+                examSections: [{id: '30654970-c2f3-452e-9f3b-91e0a852a3fb', sectionName: "Week 1: Monday, European History"}, {id: "3bd62a1f-fdcb-43a8-8d40-bfbb5989c3f7", sectionName: "Week 1: Monday, European History"}]
             });
             setIsChanged(false); // reset dirty flag after hydration
         }
@@ -98,6 +106,7 @@ export const RegistrationDetailPage = () => {
                 paymentStatus: newStatus,
                 notes: notes || `Status changed to ${newStatus}`,
                 SendNotificationEmail: sendNotification,
+                SendJoinCode: sendJoinCode,
                 updatedBy: currentUser?.username || 'Admin',
             });
 
@@ -199,6 +208,16 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name="lastName" value={studentInfo.lastName} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
+
+                                    <div>
+                                        <label className="label">
+                                            <span className="label-text font-semibold">Gender</span>
+                                        </label>
+                                        <div>
+                                            <input type="text" name="gender" value={studentInfo.gender} className="input" onChange={handleInfoChange}/>
+                                        </div>
+                                    </div>
+
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">Email</span>
@@ -207,6 +226,16 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name="email" value={studentInfo.email} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
+
+                                    <div>
+                                        <label className="label">
+                                            <span className="label-text font-semibold">Address</span>
+                                        </label>
+                                        <div>
+                                            <input type="text" name="address" value={studentInfo.address} className="input" onChange={handleInfoChange}/>
+                                        </div>
+                                    </div>
+
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">Mobile Phone</span>
@@ -332,15 +361,29 @@ export const RegistrationDetailPage = () => {
                                             <option value="Cancelled">Cancelled</option>
                                         </select>
                                     </div>
-                                    <div className="form-control">
-                                        <label className="label">
-                                            <span className="label-text">Send Notification</span>
-                                            <input
-                                                type="checkbox"
-                                                className="toggle toggle-primary ml-2"
-                                                onChange={(e) => setSendNotification(e.target.checked)}
-                                            />
-                                        </label>
+                                    <div className={"grid grid-cols-2"}>
+                                        <div className="form-control">
+                                            <label className="label">
+                                                <span className="label-text">Send Notification</span>
+                                                <input
+                                                    type="checkbox"
+                                                    className="toggle toggle-primary ml-2"
+                                                    onChange={(e) => setSendNotification(e.target.checked)}
+                                                    defaultChecked= {true}
+                                                />
+                                            </label>
+                                        </div>
+                                        <div className="form-control">
+                                            <label className="label">
+                                                <span className="label-text">Send Join Code</span>
+                                                <input
+                                                    type="checkbox"
+                                                    className="toggle toggle-primary ml-2"
+                                                    onChange={(e) => setSendJoinCode(e.target.checked)}
+                                                    defaultChecked= {true}
+                                                />
+                                            </label>
+                                        </div>
                                     </div>
 
                                     <div className="form-control">
@@ -361,7 +404,16 @@ export const RegistrationDetailPage = () => {
                                         className="btn btn-primary w-full"
                                         disabled={updating || newStatus === registration.paymentStatus}
                                     >
-                                        {updating ? 'Updating...' : 'Update Status'}
+                                        {updating ? 'Sending...' :
+
+                                            <>
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                                                     viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                                </svg>
+                                                Send</>
+                                        }
                                     </button>
                                 </div>
                             </div>
@@ -371,9 +423,9 @@ export const RegistrationDetailPage = () => {
                         {hasRole(['Admin', 'SuperAdmin']) && (
                             <div className="card bg-base-100 shadow-xl">
                                 <div className="card-body">
-                                    <h2 className="card-title">Send Notification</h2>
+                                    <h2 className="card-title">Send Message</h2>
                                     <p className="text-sm text-base-content/60">
-                                        Send email notification to student about current registration status
+                                        Send email message to student about current registration
                                     </p>
                                     <div className="form-control">
                                         <label className="label">
@@ -403,7 +455,7 @@ export const RegistrationDetailPage = () => {
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                                 </svg>
-                                                Send Notification
+                                                Send
                                             </>
                                         )}
                                     </button>
