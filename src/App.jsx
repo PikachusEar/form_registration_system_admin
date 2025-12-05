@@ -6,6 +6,7 @@ import { DashboardPage } from './components/page/DashboardPage';
 import { RegistrationsPage } from './components/page/RegistrationsPage';
 import { RegistrationDetailPage } from './components/page/RegistrationDetailPage';
 import { UserManagementPage } from './components/page/UserManagementPage';
+import { ExamSectionNamesPage } from './components/page/ExamSectionNamesPage.jsx';
 
 function App() {
     return (
@@ -37,6 +38,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <RegistrationDetailPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/exam-sections"
+                        element={
+                            <ProtectedRoute>
+                                <ExamSectionNamesPage />
                             </ProtectedRoute>
                         }
                     />

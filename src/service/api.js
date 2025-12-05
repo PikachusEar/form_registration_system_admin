@@ -182,3 +182,48 @@ export const adminUserAPI = {
         });
     },
 };
+
+// Exam Section Names API
+export const examSectionNamesAPI = {
+    getAll: async () => {
+        return await apiRequest('/SectionNames');
+    },
+
+    getActive: async () => {
+        return await apiRequest('/SectionNames/active');
+    },
+
+    getById: async (id) => {
+        return await apiRequest(`/SectionNames/${id}`);
+    },
+
+    getByDate: async (date) => {
+        return await apiRequest(`/SectionNames/by-date/${date}`);
+    },
+
+    create: async (sectionData) => {
+        return await apiRequest('/SectionNames', {
+            method: 'POST',
+            body: JSON.stringify(sectionData),
+        });
+    },
+
+    update: async (id, sectionData) => {
+        return await apiRequest(`/SectionNames/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(sectionData),
+        });
+    },
+
+    toggleActive: async (id) => {
+        return await apiRequest(`/SectionNames/${id}/toggle-active`, {
+            method: 'PATCH',
+        });
+    },
+
+    delete: async (id) => {
+        return await apiRequest(`/SectionNames/${id}`, {
+            method: 'DELETE',
+        });
+    },
+};

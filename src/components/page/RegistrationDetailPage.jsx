@@ -146,6 +146,18 @@ export const RegistrationDetailPage = () => {
         });
     };
 
+    const handleSectionChange = (sectionId, newJoinCode) => {
+        setIsChanged(true);
+        setStudentInfo(prev => ({
+            ...prev,
+            examSections: prev.examSections.map(section =>
+                section.id === sectionId
+                    ? { ...section, joinCode: newJoinCode }
+                    : section
+            )
+        }));
+    };
+
     if (loading) {
         return (
             <Layout>
@@ -244,7 +256,7 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name={"mobilePhone"} value={studentInfo.mobilePhone} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
-                                    {registration.homePhone && (
+                                    {registration.homePhone ? (
                                         <div>
                                             <label className="label">
                                                 <span className="label-text font-semibold">Home Phone</span>
@@ -253,7 +265,7 @@ export const RegistrationDetailPage = () => {
                                                 <input type="text" name={"homePhone"} value={studentInfo.homePhone} className="input" onChange={handleInfoChange}/>
                                             </div>
                                         </div>
-                                    )}
+                                    ) : null}
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">School</span>
@@ -301,7 +313,7 @@ export const RegistrationDetailPage = () => {
                         <div className="card bg-base-100 shadow-xl">
                             <div className="card-body">
                                 <h2 className="card-title">Exam Selections</h2>
-                                <ExamSections sections={studentInfo.examSections} onChange={handleInfoChange}/>
+                                <ExamSections sections={studentInfo.examSections} onChange={handleSectionChange}/>
                             </div>
                         </div>
 
