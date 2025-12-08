@@ -330,61 +330,71 @@ const CreateSectionModal = ({ onClose, onSuccess }) => {
                 <h3 className="font-bold text-lg mb-4">Create New Exam Section</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Section Name *</span>
-                        </label>
-                        <input
-                            type="text"
-                            className="input input-bordered"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                            maxLength={100}
-                            disabled={loading}
-                            placeholder="e.g., Week 1: Monday, European History"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Description</span>
-                        </label>
-                        <textarea
-                            className="textarea textarea-bordered"
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            maxLength={200}
-                            disabled={loading}
-                            rows="2"
-                            placeholder="Optional description"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Section Date *</span>
-                        </label>
-                        <input
-                            type="date"
-                            className="input input-bordered"
-                            value={formData.sectionDate}
-                            onChange={(e) => setFormData({ ...formData, sectionDate: e.target.value })}
-                            required
-                            disabled={loading}
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label cursor-pointer">
-                            <span className="label-text">Active</span>
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center">
+                            <label className="label">
+                                <span className="label-text">Section Name *</span>
+                            </label>
                             <input
-                                type="checkbox"
-                                className="toggle toggle-primary"
-                                checked={formData.isActive}
-                                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                type="text"
+                                className="input input-bordered"
+                                value={formData.name}
+                                onChange={(e) => setFormData({...formData, name: e.target.value})}
+                                required
+                                maxLength={100}
+                                disabled={loading}
+                                placeholder="e.g., Week 1: Monday, European History"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-control">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-start">
+                            <label className="label">
+                                <span className="label-text">Description</span>
+                            </label>
+                            <textarea
+                                className="textarea textarea-bordered"
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                maxLength={200}
+                                disabled={loading}
+                                rows="2"
+                                placeholder="Optional description"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-control">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center">
+                            <label className="label">
+                                <span className="label-text">Section Date *</span>
+                            </label>
+                            <input
+                                type="date"
+                                className="input input-bordered"
+                                value={formData.sectionDate}
+                                onChange={(e) => setFormData({ ...formData, sectionDate: e.target.value })}
+                                required
                                 disabled={loading}
                             />
-                        </label>
+                        </div>
+                    </div>
+
+                    <div className="form-control">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center">
+                            <label className="label">
+                                <span className="label-text">Active</span>
+                            </label>
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    className="toggle toggle-primary"
+                                    checked={formData.isActive}
+                                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                    disabled={loading}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     <div className="modal-action">
@@ -435,59 +445,69 @@ const EditSectionModal = ({ section, onClose, onSuccess }) => {
                 <h3 className="font-bold text-lg mb-4">Edit Exam Section</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Section Name *</span>
-                        </label>
-                        <input
-                            type="text"
-                            className="input input-bordered"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                            maxLength={100}
-                            disabled={loading}
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Description</span>
-                        </label>
-                        <textarea
-                            className="textarea textarea-bordered"
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                            maxLength={200}
-                            disabled={loading}
-                            rows="2"
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label">
-                            <span className="label-text">Section Date *</span>
-                        </label>
-                        <input
-                            type="date"
-                            className="input input-bordered"
-                            value={formData.sectionDate}
-                            onChange={(e) => setFormData({ ...formData, sectionDate: e.target.value })}
-                            required
-                            disabled={loading}
-                        />
-                    </div>
-
-                    <div className="form-control">
-                        <label className="label cursor-pointer">
-                            <span className="label-text">Active</span>
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center">
+                            <label className="label">
+                                <span className="label-text">Section Name *</span>
+                            </label>
                             <input
-                                type="checkbox"
-                                className="toggle toggle-primary"
-                                checked={formData.isActive}
-                                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                type="text"
+                                className="input input-bordered"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                required
+                                maxLength={100}
                                 disabled={loading}
                             />
-                        </label>
+                        </div>
+                    </div>
+
+                    <div className="form-control">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-start">
+                            <label className="label">
+                                <span className="label-text">Description</span>
+                            </label>
+                            <textarea
+                                className="textarea textarea-bordered"
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                maxLength={200}
+                                disabled={loading}
+                                rows="2"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-control">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center">
+                            <label className="label">
+                                <span className="label-text">Section Date *</span>
+                            </label>
+                            <input
+                                type="date"
+                                className="input input-bordered"
+                                value={formData.sectionDate}
+                                onChange={(e) => setFormData({ ...formData, sectionDate: e.target.value })}
+                                required
+                                disabled={loading}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-control">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center">
+                            <label className="label">
+                                <span className="label-text">Active</span>
+                            </label>
+                            <div>
+                                <input
+                                    type="checkbox"
+                                    className="toggle toggle-primary"
+                                    checked={formData.isActive}
+                                    onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
+                                    disabled={loading}
+                                />
+                            </div>
+                        </div>
                     </div>
 
                     {section.usageCount > 0 && (
