@@ -1,26 +1,23 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5051/api';
 
-// Get token from localStorage
 const getAuthToken = () => {
     return localStorage.getItem('adminToken');
 };
 
-// Generic API request with authentication (add token to headers)
-const apiRequest = async (url, options = {}) => {
+const apiRequest = async (endpoint, options = {}) => {
     const token = getAuthToken();
 
-    const defaultOptions = {
+    const config = {
         headers: {
             'Content-Type': 'application/json',
             ...(token && { 'Authorization': `Bearer ${token}` }),
             ...options.headers,
         },
+        ...options,
     };
 
-    const config = { ...defaultOptions, ...options };
-
     try {
-        const response = await fetch(`${API_BASE_URL}${url}`, config);
+        const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
         // Handle 401 Unauthorized
         if (response.status === 401) {
@@ -33,21 +30,15 @@ const apiRequest = async (url, options = {}) => {
         const data = await response.json();
 
         if (!response.ok) {
-            throw {
-                status: response.status,
-                message: data.message || 'An error occurred',
-                errors: data.errors || [],
-            };
+            throw new Error(data.message || 'API request failed');
         }
 
         return data;
     } catch (error) {
-        if (error.status) {
-            throw error;
-        }
-        throw {
-            status: 0,
-            message: 'Network error. Please check your connection.',
+        console.error('API Error:', error);
+        return {
+            success: false,
+            message: error.message || 'Network error. Please check your connection.',
             errors: [error.message],
         };
     }
@@ -142,6 +133,12 @@ export const registrationAPI = {
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
+    },
+
+    delete: async (id) => {
+        return await apiRequest(`/registrations/${id}`, {
+            method: 'DELETE',
+        });
     },
 };
 

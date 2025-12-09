@@ -17,8 +17,8 @@ export const RegistrationDetailPage = () => {
     const [newStatus, setNewStatus] = useState('');
     const [notes, setNotes] = useState('');
     const [customMessage, setCustomMessage] = useState('');
-    const [sendNotification, setSendNotification] = useState(false);
-    const [sendJoinCode, setSendJoinCode] = useState(false);
+    const [sendNotification, setSendNotification] = useState(true);
+    const [sendJoinCode, setSendJoinCode] = useState(true);
     const [studentInfo, setStudentInfo] = useState({
         firstName: '',
         lastName: '',
@@ -69,6 +69,7 @@ export const RegistrationDetailPage = () => {
             setLoading(false);
         }
     };
+
     const handleSaveChanges = async () => {
         try{
             const response = await registrationAPI.updateInfo(id, studentInfo);
@@ -81,7 +82,6 @@ export const RegistrationDetailPage = () => {
         } finally {
             setUpdating(false);
         }
-
     }
 
     const handleInfoChange = (e) => {
@@ -89,7 +89,6 @@ export const RegistrationDetailPage = () => {
         const { name, value } = e.target;
         setStudentInfo({ ...studentInfo, [name]: value });
     }
-
 
     const handleUpdateStatus = async () => {
         if (newStatus === registration.paymentStatus) {
@@ -133,6 +132,22 @@ export const RegistrationDetailPage = () => {
             alert('Error sending notification: ' + (error.message || 'Unknown error'));
         } finally {
             setSending(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!hasRole(['Admin', 'SuperAdmin'])) return;
+
+        if (!confirm(`Are you sure you want to delete the registration for "${registration.firstName} ${registration.lastName}"? This action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            await registrationAPI.delete(id);
+            alert('Registration deleted successfully!');
+            navigate('/registrations');
+        } catch (error) {
+            alert('Error deleting registration: ' + (error.message || 'Unknown error'));
         }
     };
 
@@ -192,8 +207,8 @@ export const RegistrationDetailPage = () => {
                             registration.paymentStatus === 'Pending' ? 'badge-warning' :
                                 'badge-error'
                     }`}>
-            {registration.paymentStatus}
-          </span>
+                        {registration.paymentStatus}
+                    </span>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -210,7 +225,6 @@ export const RegistrationDetailPage = () => {
                                         <div>
                                             <input type="text" name="firstName" value={studentInfo.firstName} className="input" onChange={handleInfoChange}/>
                                         </div>
-
                                     </div>
                                     <div>
                                         <label className="label">
@@ -220,7 +234,6 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name="lastName" value={studentInfo.lastName} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
-
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">Gender</span>
@@ -229,7 +242,6 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name="gender" value={studentInfo.gender} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
-
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">Email</span>
@@ -238,40 +250,28 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name="email" value={studentInfo.email} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
-
-                                    <div>
-                                        <label className="label">
-                                            <span className="label-text font-semibold">Address</span>
-                                        </label>
-                                        <div>
-                                            <input type="text" name="address" value={studentInfo.address} className="input" onChange={handleInfoChange}/>
-                                        </div>
-                                    </div>
-
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">Mobile Phone</span>
                                         </label>
                                         <div>
-                                            <input type="text" name={"mobilePhone"} value={studentInfo.mobilePhone} className="input" onChange={handleInfoChange}/>
+                                            <input type="text" name="mobilePhone" value={studentInfo.mobilePhone} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
-                                    {registration.homePhone ? (
-                                        <div>
-                                            <label className="label">
-                                                <span className="label-text font-semibold">Home Phone</span>
-                                            </label>
-                                            <div>
-                                                <input type="text" name={"homePhone"} value={studentInfo.homePhone} className="input" onChange={handleInfoChange}/>
-                                            </div>
-                                        </div>
-                                    ) : null}
                                     <div>
                                         <label className="label">
-                                            <span className="label-text font-semibold">School</span>
+                                            <span className="label-text font-semibold">Home Phone</span>
                                         </label>
                                         <div>
-                                            <input type="text" name={"currentSchool"} value={studentInfo.currentSchool} className="input" onChange={handleInfoChange}/>
+                                            <input type="text" name="homePhone" value={studentInfo.homePhone} className="input" onChange={handleInfoChange}/>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label className="label">
+                                            <span className="label-text font-semibold">Current School</span>
+                                        </label>
+                                        <div>
+                                            <input type="text" name="currentSchool" value={studentInfo.currentSchool} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     <div>
@@ -279,7 +279,7 @@ export const RegistrationDetailPage = () => {
                                             <span className="label-text font-semibold">Grade</span>
                                         </label>
                                         <div>
-                                            <input type="text" name={"grade"} value={studentInfo.grade} className="input" onChange={handleInfoChange}/>
+                                            <input type="text" name="grade" value={studentInfo.grade} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
                                     <div>
@@ -288,7 +288,6 @@ export const RegistrationDetailPage = () => {
                                         </label>
                                         <p>{formatDate(registration.createdAt)}</p>
                                     </div>
-
                                     {registration.updatedAt && (
                                         <div>
                                             <label className="label">
@@ -306,18 +305,19 @@ export const RegistrationDetailPage = () => {
                                         className="btn btn-primary"
                                         onClick={handleSaveChanges}
                                         disabled={!isChanged}
-                                    > Save Changes </button>
+                                    >
+                                        Save Changes
+                                    </button>
                                 </div>
                             </div>
                         </div>
+
                         <div className="card bg-base-100 shadow-xl">
                             <div className="card-body">
                                 <h2 className="card-title">Exam Selections</h2>
                                 <ExamSections sections={studentInfo.examSections} onChange={handleSectionChange}/>
                             </div>
                         </div>
-
-
 
                         {/* Audit History */}
                         <div className="card bg-base-100 shadow-xl">
@@ -338,8 +338,8 @@ export const RegistrationDetailPage = () => {
                                                         )}
                                                     </div>
                                                     <span className="text-xs text-base-content/60">
-                            {formatDate(audit.changedAt)}
-                          </span>
+                                                        {formatDate(audit.changedAt)}
+                                                    </span>
                                                 </div>
                                             </div>
                                         ))}
@@ -373,7 +373,7 @@ export const RegistrationDetailPage = () => {
                                             <option value="Cancelled">Cancelled</option>
                                         </select>
                                     </div>
-                                    <div className={"grid grid-cols-2"}>
+                                    <div className="grid grid-cols-2">
                                         <div className="form-control">
                                             <label className="label">
                                                 <span className="label-text">Send Notification</span>
@@ -381,7 +381,7 @@ export const RegistrationDetailPage = () => {
                                                     type="checkbox"
                                                     className="toggle toggle-primary ml-2"
                                                     onChange={(e) => setSendNotification(e.target.checked)}
-                                                    defaultChecked= {true}
+                                                    defaultChecked={true}
                                                 />
                                             </label>
                                         </div>
@@ -392,40 +392,39 @@ export const RegistrationDetailPage = () => {
                                                     type="checkbox"
                                                     className="toggle toggle-primary ml-2"
                                                     onChange={(e) => setSendJoinCode(e.target.checked)}
-                                                    defaultChecked= {true}
+                                                    defaultChecked={true}
                                                 />
                                             </label>
                                         </div>
                                     </div>
-
                                     <div className="form-control">
                                         <label className="label">
                                             <span className="label-text">Notes (optional)</span>
                                         </label>
-                                        <div><textarea
-                                            className="textarea textarea-bordered w-full"
-                                            placeholder="Add notes about this change (Student will see this note)"
-                                            value={notes}
-                                            onChange={(e) => setNotes(e.target.value)}
-                                            disabled={updating}
-                                            rows="2"
-                                        /></div>
+                                        <div>
+                                            <textarea
+                                                className="textarea textarea-bordered w-full"
+                                                placeholder="Add notes about this change (Student will see this note)"
+                                                value={notes}
+                                                onChange={(e) => setNotes(e.target.value)}
+                                                disabled={updating}
+                                                rows="2"
+                                            />
+                                        </div>
                                     </div>
                                     <button
                                         onClick={handleUpdateStatus}
                                         className="btn btn-primary w-full"
                                         disabled={updating || newStatus === registration.paymentStatus}
                                     >
-                                        {updating ? 'Sending...' :
-
+                                        {updating ? (
                                             <>
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
-                                                     viewBox="0 0 24 24" stroke="currentColor">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                                                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                                                </svg>
-                                                Send</>
-                                        }
+                                                <span className="loading loading-spinner"></span>
+                                                Updating...
+                                            </>
+                                        ) : (
+                                            'Update Status'
+                                        )}
                                     </button>
                                 </div>
                             </div>
@@ -443,14 +442,16 @@ export const RegistrationDetailPage = () => {
                                         <label className="label">
                                             <span className="label-text">Custom Message (required)</span>
                                         </label>
-                                        <div><textarea
-                                            className="textarea textarea-bordered w-full"
-                                            placeholder="Add a custom message to include in the email..."
-                                            value={customMessage}
-                                            onChange={(e) => setCustomMessage(e.target.value)}
-                                            disabled={sending}
-                                            rows="3"
-                                        /></div>
+                                        <div>
+                                            <textarea
+                                                className="textarea textarea-bordered w-full"
+                                                placeholder="Add a custom message to include in the email..."
+                                                value={customMessage}
+                                                onChange={(e) => setCustomMessage(e.target.value)}
+                                                disabled={sending}
+                                                rows="3"
+                                            />
+                                        </div>
                                     </div>
                                     <button
                                         onClick={handleSendNotification}
@@ -470,6 +471,32 @@ export const RegistrationDetailPage = () => {
                                                 Send
                                             </>
                                         )}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Danger Zone */}
+                        {hasRole(['Admin', 'SuperAdmin']) && (
+                            <div className="card bg-error/10 border-2 border-error shadow-xl">
+                                <div className="card-body">
+                                    <h2 className="card-title text-error">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                        </svg>
+                                        Delete
+                                    </h2>
+                                    <p className="text-sm text-base-content/60">
+                                        Permanently delete this registration. This action cannot be undone.
+                                    </p>
+                                    <button
+                                        onClick={handleDelete}
+                                        className="btn btn-error w-full"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                        Delete Registration
                                     </button>
                                 </div>
                             </div>

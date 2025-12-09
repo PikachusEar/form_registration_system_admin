@@ -350,20 +350,20 @@ const EditUserModal = ({ user, onClose, onSuccess }) => {
                 <h3 className="font-bold text-lg mb-4">Edit User</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-control">
-                        <label className="label">
+                        <div className="grid grid-cols-[25%_75%] gap-2 items-center"><label className="label">
                             <span className="label-text">Username</span>
                         </label>
-                        <input
-                            type="text"
-                            className="input input-bordered"
-                            value={formData.username}
-                            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                            disabled={loading}
-                        />
+                            <input
+                                type="text"
+                                className="input input-bordered"
+                                value={formData.username}
+                                onChange={(e) => setFormData({...formData, username: e.target.value})}
+                                disabled={loading}
+                            /></div>
                     </div>
 
                     <div className="form-control">
-                        <label className="label">
+                        <div className="grid grid-cols-[25%_75%] gap-2 items-center"><label className="label">
                             <span className="label-text">Email</span>
                         </label>
                         <input
@@ -372,23 +372,23 @@ const EditUserModal = ({ user, onClose, onSuccess }) => {
                             value={formData.email}
                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             disabled={loading}
-                        />
+                        /></div>
                     </div>
 
                     <div className="form-control">
-                        <label className="label">
+                        <div className="grid grid-cols-[25%_75%] gap-2 items-center"><label className="label">
                             <span className="label-text">Role</span>
                         </label>
-                        <select
-                            className="select select-bordered"
-                            value={formData.role}
-                            onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                            disabled={loading}
-                        >
-                            <option value="Viewer">Viewer</option>
-                            <option value="Admin">Admin</option>
-                            <option value="SuperAdmin">SuperAdmin</option>
-                        </select>
+                            <select
+                                className="select select-bordered"
+                                value={formData.role}
+                                onChange={(e) => setFormData({...formData, role: e.target.value})}
+                                disabled={loading}
+                            >
+                                <option value="Viewer">Viewer</option>
+                                <option value="Admin">Admin</option>
+                                <option value="SuperAdmin">SuperAdmin</option>
+                            </select></div>
                     </div>
 
                     <div className="form-control">
@@ -453,33 +453,33 @@ const UpdatePasswordModal = ({ user, onClose, onSuccess }) => {
                 <h3 className="font-bold text-lg mb-4">Update Password for {user.username}</h3>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="form-control">
-                        <label className="label">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center"><label className="label">
                             <span className="label-text">New Password</span>
                         </label>
-                        <input
-                            type="password"
-                            className="input input-bordered"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                            minLength={8}
-                            disabled={loading}
-                        />
+                            <input
+                                type="password"
+                                className="input input-bordered"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                                minLength={8}
+                                disabled={loading}
+                            /></div>
                     </div>
 
                     <div className="form-control">
-                        <label className="label">
+                        <div className="grid grid-cols-[30%_70%] gap-2 items-center"><label className="label">
                             <span className="label-text">Confirm Password</span>
                         </label>
-                        <input
-                            type="password"
-                            className="input input-bordered"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                            minLength={8}
-                            disabled={loading}
-                        />
+                            <input
+                                type="password"
+                                className="input input-bordered"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                                minLength={8}
+                                disabled={loading}
+                            /></div>
                     </div>
 
                     <div className="modal-action">

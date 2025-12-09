@@ -100,6 +100,22 @@ export const RegistrationsPage = () => {
         }
     };
 
+    const handleDelete = async (reg) => {
+        if (!hasRole(['Admin', 'SuperAdmin'])) return;
+
+        if (!confirm(`Are you sure you want to delete the registration for "${reg.firstName} ${reg.lastName}"?`)) {
+            return;
+        }
+
+        try {
+            await registrationAPI.delete(reg.id);
+            alert('Registration deleted successfully!');
+            await fetchRegistrations();
+        } catch (error) {
+            alert('Error deleting registration: ' + (error.message || 'Unknown error'));
+        }
+    };
+
     const handleExport = async () => {
         try {
             await registrationAPI.exportCSV();
@@ -242,7 +258,7 @@ export const RegistrationsPage = () => {
                                 <tbody>
                                 {filteredRegistrations.length === 0 ? (
                                     <tr>
-                                        <td colSpan={hasRole(['Admin', 'SuperAdmin']) ? "9" : "8"} className="text-center py-8">
+                                        <td colSpan={hasRole(['Admin', 'SuperAdmin']) ? "10" : "9"} className="text-center py-8">
                                             No registrations found
                                         </td>
                                     </tr>
@@ -268,22 +284,32 @@ export const RegistrationsPage = () => {
                                             <td>{reg.grade}</td>
                                             <td>{reg.examSection}</td>
                                             <td>
-                          <span className={`badge ${
-                              reg.paymentStatus === 'Confirmed' ? 'badge-success' :
-                                  reg.paymentStatus === 'Pending' ? 'badge-warning' :
-                                      'badge-error'
-                          }`}>
-                            {reg.paymentStatus}
-                          </span>
+                                                <span className={`badge ${
+                                                    reg.paymentStatus === 'Confirmed' ? 'badge-success' :
+                                                        reg.paymentStatus === 'Pending' ? 'badge-warning' :
+                                                            'badge-error'
+                                                }`}>
+                                                    {reg.paymentStatus}
+                                                </span>
                                             </td>
                                             <td className="text-sm">{formatDate(reg.createdAt)}</td>
                                             <td>
-                                                <Link
-                                                    to={`/registrations/${reg.id}`}
-                                                    className="btn btn-info btn-sm"
-                                                >
-                                                    View
-                                                </Link>
+                                                <div className="flex gap-2">
+                                                    <Link
+                                                        to={`/registrations/${reg.id}`}
+                                                        className="btn btn-info btn-sm"
+                                                    >
+                                                        View
+                                                    </Link>
+                                                    {hasRole(['Admin', 'SuperAdmin']) && (
+                                                        <button
+                                                            onClick={() => handleDelete(reg)}
+                                                            className="btn btn-error btn-sm"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))
