@@ -309,6 +309,15 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name="grade" value={studentInfo.grade} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
+
+                                    <div>
+                                        <label className="label">
+                                            <span className="label-text font-semibold">Payment Code</span>
+                                        </label>
+                                        <p className={"text-2xl font-semibold text-gray-500"}>{registration.paymentCode}</p>
+                                    </div>
+
+
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">Created At</span>

@@ -49,7 +49,7 @@ export const RegistrationsPage = () => {
                 r.firstName.toLowerCase().includes(term) ||
                 r.lastName.toLowerCase().includes(term) ||
                 r.email.toLowerCase().includes(term) ||
-                r.currentSchool.toLowerCase().includes(term)
+                r.paymentCode.toLowerCase().includes(term)
             );
         }
 
@@ -171,7 +171,7 @@ export const RegistrationsPage = () => {
                             <div className="form-control flex-1">
                                 <input
                                     type="text"
-                                    placeholder="Search by name, email, or school..."
+                                    placeholder="Search by name, email, or payment code..."
                                     className="input input-bordered w-full"
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -247,7 +247,7 @@ export const RegistrationsPage = () => {
                                     <th>From</th>
                                     <th>Name</th>
                                     <th>Email</th>
-                                    <th>School</th>
+                                    <th>Payment Code</th>
                                     <th>Grade</th>
                                     <th>Exam Section</th>
                                     <th>Status</th>
@@ -280,7 +280,7 @@ export const RegistrationsPage = () => {
                                                 {reg.firstName} {reg.lastName}
                                             </td>
                                             <td>{reg.email}</td>
-                                            <td>{reg.currentSchool}</td>
+                                            <td>{reg.paymentCode}</td>
                                             <td>{reg.grade}</td>
                                             <td>{reg.examSections.length}</td>
                                             <td>
