@@ -23,13 +23,14 @@ export const RegistrationDetailPage = () => {
         firstName: '',
         lastName: '',
         email:  '',
+        dateOfBirth: '',
         mobilePhone: '',
         homePhone: '',
         currentSchool: '',
         grade: '',
-        address: 'test',
-        gender: 'test',
-        examSections: [{id: '30654970-c2f3-452e-9f3b-91e0a852a3fb', sectionName: "Week 1: Monday, European History"}, {id: "3bd62a1f-fdcb-43a8-8d40-bfbb5989c3f7", sectionName: "Week 1: Monday, European History"}]
+        address: '',
+        gender: '',
+        examSections: []
     });
 
     const [isChanged, setIsChanged] = useState(false);
@@ -44,6 +45,7 @@ export const RegistrationDetailPage = () => {
                 firstName: registration.firstName || '',
                 lastName: registration.lastName || '',
                 email: registration.email || '',
+                dateOfBirth: registration.dateOfBirth || '',
                 mobilePhone: registration.mobilePhone || '',
                 homePhone: registration.homePhone || '',
                 currentSchool: registration.currentSchool || '',
@@ -134,6 +136,21 @@ export const RegistrationDetailPage = () => {
             setSending(false);
         }
     };
+
+    const handleSendCompletionNotice = async () => {
+        if (!confirm('Send completion notice email to student?')) return;
+        setSending(true);
+        try {
+            await registrationAPI.sendCompleteNotification(id);
+            alert('Completion notice sent successfully!');
+            await fetchRegistration();
+        }
+        catch (error) {
+            alert('Error sending completion notice: ' + (error.message || 'Unknown error'));
+        } finally {
+            setSending(false);
+        }
+    }
 
     const handleDelete = async () => {
         if (!hasRole(['Admin', 'SuperAdmin'])) return;
@@ -242,6 +259,16 @@ export const RegistrationDetailPage = () => {
                                             <input type="text" name="gender" value={studentInfo.gender} className="input" onChange={handleInfoChange}/>
                                         </div>
                                     </div>
+
+                                    <div>
+                                        <label className="label">
+                                            <span className="label-text font-semibold">DOB(YYYY-MM-DD)</span>
+                                        </label>
+                                        <div>
+                                            <input type="text" name="dateOfBirth" value={studentInfo.dateOfBirth} className="input" onChange={handleInfoChange}/>
+                                        </div>
+                                    </div>
+
                                     <div>
                                         <label className="label">
                                             <span className="label-text font-semibold">Email</span>
@@ -456,6 +483,38 @@ export const RegistrationDetailPage = () => {
                                     <button
                                         onClick={handleSendNotification}
                                         className="btn btn-secondary w-full"
+                                        disabled={sending}
+                                    >
+                                        {sending ? (
+                                            <>
+                                                <span className="loading loading-spinner"></span>
+                                                Sending...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                                Send
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+
+                        {/* Send Completion Notice */}
+                        {hasRole(['Admin', 'SuperAdmin']) && (
+                            <div className="card bg-base-100 shadow-xl">
+                                <div className="card-body">
+                                    <h2 className="card-title">Completion Notice</h2>
+                                    <p className="text-sm text-base-content/60">
+                                        Send Completion Notice to student.
+                                    </p>
+                                    <button
+                                        onClick={handleSendCompletionNotice}
+                                        className="btn btn-success w-full"
                                         disabled={sending}
                                     >
                                         {sending ? (

@@ -112,6 +112,12 @@ export const registrationAPI = {
         });
     },
 
+    sendCompleteNotification: async (id) => {
+        return await apiRequest(`/registrations/${id}/send-registration-complete`, {
+            method: 'POST',
+        });
+    },
+
     exportCSV: async () => {
         const token = getAuthToken();
         const response = await fetch(`${API_BASE_URL}/registrations/export-csv`, {

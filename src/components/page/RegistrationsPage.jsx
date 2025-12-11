@@ -231,7 +231,7 @@ export const RegistrationsPage = () => {
                 <div className="card bg-base-100 shadow-xl">
                     <div className="card-body">
                         <div className="overflow-x-auto">
-                            <table className="table table-zebra">
+                            <table className="table table-zebra text-center">
                                 <thead>
                                 <tr>
                                     {hasRole(['Admin', 'SuperAdmin']) && (
@@ -282,7 +282,7 @@ export const RegistrationsPage = () => {
                                             <td>{reg.email}</td>
                                             <td>{reg.currentSchool}</td>
                                             <td>{reg.grade}</td>
-                                            <td>{reg.examSection}</td>
+                                            <td>{reg.examSections.length}</td>
                                             <td>
                                                 <span className={`badge ${
                                                     reg.paymentStatus === 'Confirmed' ? 'badge-success' :
@@ -294,7 +294,7 @@ export const RegistrationsPage = () => {
                                             </td>
                                             <td className="text-sm">{formatDate(reg.createdAt)}</td>
                                             <td>
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2 items-center justify-center">
                                                     <Link
                                                         to={`/registrations/${reg.id}`}
                                                         className="btn btn-info btn-sm"
