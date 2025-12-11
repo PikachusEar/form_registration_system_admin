@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { registrationAPI } from '../../service/api.js';
+import { registrationAPI, examSectionNamesAPI } from '../../service/api.js';
 import { Layout } from '../layout/Layout.jsx';
 import { useAuth } from '../../context/AuthContext.jsx';
 
@@ -11,17 +11,20 @@ export const RegistrationsPage = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('All');
+    const [examSectionFilter, setExamSectionFilter] = useState('All');
+    const [examSections, setExamSections] = useState([]);
     const [selectedIds, setSelectedIds] = useState([]);
     const [bulkAction, setBulkAction] = useState('');
     const [processingBulk, setProcessingBulk] = useState(false);
 
     useEffect(() => {
         fetchRegistrations();
+        fetchExamSections();
     }, []);
 
     useEffect(() => {
         filterRegistrations();
-    }, [searchTerm, statusFilter, registrations]);
+    }, [searchTerm, statusFilter, examSectionFilter, registrations]);
 
     const fetchRegistrations = async () => {
         try {
@@ -34,12 +37,34 @@ export const RegistrationsPage = () => {
         }
     };
 
+    const fetchExamSections = async () => {
+        try {
+            const response = await examSectionNamesAPI.getAll();
+            // Sort sections by name alphabetically
+            const sorted = (response.data || []).sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+            setExamSections(sorted);
+        } catch (error) {
+            console.error('Error fetching exam sections:', error);
+        }
+    };
+
     const filterRegistrations = () => {
         let filtered = [...registrations];
 
         // Status filter
         if (statusFilter !== 'All') {
             filtered = filtered.filter(r => r.paymentStatus === statusFilter);
+        }
+
+        // Exam Section filter
+        if (examSectionFilter !== 'All') {
+            filtered = filtered.filter(r =>
+                    r.examSections && r.examSections.some(section =>
+                        section.sectionNameId === examSectionFilter
+                    )
+            );
         }
 
         // Search filter
@@ -187,6 +212,24 @@ export const RegistrationsPage = () => {
                                     <option value="Pending">Pending</option>
                                     <option value="Confirmed">Confirmed</option>
                                     <option value="Cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                            <div className="form-control">
+                                <select
+                                    className="select select-bordered"
+                                    value={examSectionFilter}
+                                    onChange={(e) => setExamSectionFilter(e.target.value)}
+                                    style={{
+                                        maxHeight: '240px',
+                                        overflowY: 'auto'
+                                    }}
+                                >
+                                    <option value="All">All Exam Sections</option>
+                                    {examSections.map((section) => (
+                                        <option key={section.id} value={section.id}>
+                                            {section.name}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                         </div>
