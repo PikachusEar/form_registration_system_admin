@@ -339,7 +339,7 @@ export const RegistrationsPage = () => {
                                             <td>
                                                 <div className="flex gap-2 items-center justify-center">
                                                     <Link
-                                                        to={`/registrations/${reg.id}`}
+                                                        to={`/admin/registrations/${reg.id}`}
                                                         className="btn btn-info btn-sm"
                                                     >
                                                         View

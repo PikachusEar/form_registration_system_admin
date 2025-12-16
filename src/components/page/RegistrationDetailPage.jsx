@@ -66,7 +66,7 @@ export const RegistrationDetailPage = () => {
         } catch (error) {
             console.error('Error fetching registration:', error);
             alert('Registration not found');
-            navigate('/registrations');
+            navigate('/admin/registrations');
         } finally {
             setLoading(false);
         }
@@ -162,7 +162,7 @@ export const RegistrationDetailPage = () => {
         try {
             await registrationAPI.delete(id);
             alert('Registration deleted successfully!');
-            navigate('/registrations');
+            navigate('/admin/registrations');
         } catch (error) {
             alert('Error deleting registration: ' + (error.message || 'Unknown error'));
         }
@@ -207,7 +207,7 @@ export const RegistrationDetailPage = () => {
                 <div className="flex justify-between items-center">
                     <div>
                         <button
-                            onClick={() => navigate('/registrations')}
+                            onClick={() => navigate('/admin/registrations')}
                             className="btn btn-ghost btn-sm mb-2"
                         >
                             ← Back to Registrations

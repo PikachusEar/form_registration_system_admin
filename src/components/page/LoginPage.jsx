@@ -18,7 +18,7 @@ export const LoginPage = () => {
         try {
             const result = await login(username, password);
             if (result.success) {
-                navigate('/');
+                navigate('/admin/');
             } else {
                 setError(result.message || 'Login failed');
             }

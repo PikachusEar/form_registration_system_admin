@@ -36,7 +36,7 @@ const apiRequest = async (endpoint, options = {}) => {
         return data;
     } catch (error) {
         console.error('API Error:', error);
-        return {
+        throw{
             success: false,
             message: error.message || 'Network error. Please check your connection.',
             errors: [error.message],

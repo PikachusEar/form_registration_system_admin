@@ -13,7 +13,7 @@ export const ProtectedRoute = ({ children, roles }) => {
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/admin/login" replace />;
     }
 
     if (roles && !hasRole(roles)) {

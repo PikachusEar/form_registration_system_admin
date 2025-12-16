@@ -129,7 +129,7 @@ export const DashboardPage = () => {
                     <div className="card-body">
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="card-title">Recent Registrations</h2>
-                            <Link to="/registrations" className="btn btn-sm btn-primary">
+                            <Link to="/admin/registrations" className="btn btn-sm btn-primary">
                                 View All
                             </Link>
                         </div>
