@@ -98,9 +98,9 @@ export const registrationAPI = {
         });
     },
 
-    bulkUpdateStatus: async (bulkData) => {
-        return await apiRequest('/registrations/bulk-status', {
-            method: 'PUT',
+    bulkEdit: async (bulkData) => {
+        return await apiRequest('/registrations/bulk-edit', {
+            method: 'POST',
             body: JSON.stringify(bulkData),
         });
     },

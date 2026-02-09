@@ -16,6 +16,7 @@ export const RegistrationsPage = () => {
     const [selectedIds, setSelectedIds] = useState([]);
     const [bulkAction, setBulkAction] = useState('');
     const [processingBulk, setProcessingBulk] = useState(false);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
 
     useEffect(() => {
         fetchRegistrations();
@@ -23,8 +24,8 @@ export const RegistrationsPage = () => {
     }, []);
 
     useEffect(() => {
-        filterRegistrations();
-    }, [searchTerm, statusFilter, examSectionFilter, registrations]);
+        filterAndSortRegistrations();
+    }, [searchTerm, statusFilter, examSectionFilter, registrations, sortConfig]);
 
     const fetchRegistrations = async () => {
         try {
@@ -40,7 +41,6 @@ export const RegistrationsPage = () => {
     const fetchExamSections = async () => {
         try {
             const response = await examSectionNamesAPI.getAll();
-            // Sort sections by name alphabetically
             const sorted = (response.data || []).sort((a, b) =>
                 a.name.localeCompare(b.name)
             );
@@ -50,7 +50,7 @@ export const RegistrationsPage = () => {
         }
     };
 
-    const filterRegistrations = () => {
+    const filterAndSortRegistrations = () => {
         let filtered = [...registrations];
 
         // Status filter
@@ -78,7 +78,73 @@ export const RegistrationsPage = () => {
             );
         }
 
+        // Sort
+        if (sortConfig.key) {
+            filtered.sort((a, b) => {
+                let aVal, bVal;
+
+                switch (sortConfig.key) {
+                    case 'name':
+                        aVal = `${a.firstName} ${a.lastName}`.toLowerCase();
+                        bVal = `${b.firstName} ${b.lastName}`.toLowerCase();
+                        break;
+                    case 'email':
+                        aVal = a.email.toLowerCase();
+                        bVal = b.email.toLowerCase();
+                        break;
+                    case 'grade':
+                        aVal = a.grade ?? '';
+                        bVal = b.grade ?? '';
+                        break;
+                    case 'examSection':
+                        aVal = a.examSections?.length ?? 0;
+                        bVal = b.examSections?.length ?? 0;
+                        break;
+                    case 'status':
+                        aVal = a.paymentStatus.toLowerCase();
+                        bVal = b.paymentStatus.toLowerCase();
+                        break;
+                    case 'created':
+                        aVal = new Date(a.createdAt).getTime();
+                        bVal = new Date(b.createdAt).getTime();
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
         setFilteredRegistrations(filtered);
+    };
+
+    const handleSort = (key) => {
+        setSortConfig(prev => ({
+            key,
+            direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc',
+        }));
+    };
+
+    const SortIcon = ({ columnKey }) => {
+        if (sortConfig.key !== columnKey) {
+            return (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block ml-1 opacity-30" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                </svg>
+            );
+        }
+        return sortConfig.direction === 'asc' ? (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+            </svg>
+        ) : (
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 inline-block ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+        );
     };
 
     const handleSelectAll = (e) => {
@@ -107,11 +173,10 @@ export const RegistrationsPage = () => {
         setProcessingBulk(true);
         try {
             const currentUser = JSON.parse(localStorage.getItem('adminUser'));
-            await registrationAPI.bulkUpdateStatus({
+            await registrationAPI.bulkEdit({
                 registrationIds: selectedIds,
-                paymentStatus: bulkAction,
-                updatedBy: currentUser?.username || 'Admin',
-                notes: 'Bulk status update'
+                status: bulkAction,
+                updatedBy: currentUser?.username || 'System',
             });
 
             alert('Bulk update completed successfully!');
@@ -248,9 +313,10 @@ export const RegistrationsPage = () => {
                                     onChange={(e) => setBulkAction(e.target.value)}
                                 >
                                     <option value="">Select Action</option>
-                                    <option value="Confirmed">Mark as Confirmed</option>
-                                    <option value="Pending">Mark as Pending</option>
-                                    <option value="Cancelled">Mark as Cancelled</option>
+                                    <option value="Delete">Delete</option>
+                                    <option value="Confirmed">Mark Confirmed</option>
+                                    <option value="Cancelled">Mark Cancelled</option>
+                                    <option value="Pending">Mark Pending</option>
                                 </select>
                                 <button
                                     onClick={handleBulkAction}
@@ -288,13 +354,25 @@ export const RegistrationsPage = () => {
                                         </th>
                                     )}
                                     <th>From</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
+                                    <th className="cursor-pointer select-none hover:bg-base-200 transition-colors" onClick={() => handleSort('name')}>
+                                        Name <SortIcon columnKey="name" />
+                                    </th>
+                                    <th className="cursor-pointer select-none hover:bg-base-200 transition-colors" onClick={() => handleSort('email')}>
+                                        Email <SortIcon columnKey="email" />
+                                    </th>
                                     <th>Payment Code</th>
-                                    <th>Grade</th>
-                                    <th>Exam Section</th>
-                                    <th>Status</th>
-                                    <th>Created</th>
+                                    <th className="cursor-pointer select-none hover:bg-base-200 transition-colors" onClick={() => handleSort('grade')}>
+                                        Grade <SortIcon columnKey="grade" />
+                                    </th>
+                                    <th className="cursor-pointer select-none hover:bg-base-200 transition-colors" onClick={() => handleSort('examSection')}>
+                                        Exam Section <SortIcon columnKey="examSection" />
+                                    </th>
+                                    <th className="cursor-pointer select-none hover:bg-base-200 transition-colors" onClick={() => handleSort('status')}>
+                                        Status <SortIcon columnKey="status" />
+                                    </th>
+                                    <th className="cursor-pointer select-none hover:bg-base-200 transition-colors" onClick={() => handleSort('created')}>
+                                        Created <SortIcon columnKey="created" />
+                                    </th>
                                     <th>Actions</th>
                                 </tr>
                                 </thead>
