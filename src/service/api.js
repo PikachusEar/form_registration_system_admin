@@ -23,7 +23,7 @@ const apiRequest = async (endpoint, options = {}) => {
         if (response.status === 401) {
             localStorage.removeItem('adminToken');
             localStorage.removeItem('adminUser');
-            window.location.href = '/login';
+            window.location.href = '/admin/login';
             throw new Error('Unauthorized');
         }
 
